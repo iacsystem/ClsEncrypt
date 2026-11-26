@@ -36,6 +36,7 @@ namespace ClsEncrypt
     /// <returns></returns>
     private static string myEncryptEx(string str, string entropy)
     {
+      log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
       var encryptedStr = "";
       try {
         var entropyBytes = Encoding.UTF8.GetBytes(entropy);
@@ -45,8 +46,9 @@ namespace ClsEncrypt
         encryptedStr = Convert.ToBase64String(encryptedBytes);
 
       } catch (Exception ex) {
-        Console.WriteLine(ex.ToString());
-        throw;
+        log.Error("encrypt failed.", ex);
+        // Console.WriteLine(ex.ToString());
+        // throw;
       }
       return encryptedStr;
     }
@@ -60,7 +62,7 @@ namespace ClsEncrypt
     private static string myDecryptEx(string base64Str, string entropy)
     {
       log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-      var decryptedStr = "";
+      var decryptedStr = base64Str;
 
       if (string.IsNullOrEmpty(base64Str)) {
         return decryptedStr;
@@ -74,7 +76,7 @@ namespace ClsEncrypt
         decryptedStr = Encoding.UTF8.GetString(decryptedBytes);
 
       } catch (Exception ex) {
-        log.Error($"encryptedStr = >{base64Str}<", ex);
+        log.Error($"DPAPI check:[{myEncryptEx(base64Str,entropy)}]", ex);
         // Console.WriteLine(ex.ToString());
         // throw;
       }
